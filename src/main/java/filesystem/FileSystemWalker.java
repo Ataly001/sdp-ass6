@@ -1,16 +1,17 @@
 package filesystem;
 
-import java.util.Comparator;
+import java.util.*;
 
-public class FileSystemWalker {
+public final class FileSystemWalker {
 
     public void walk(Node root, Visitor visitor) {
         if (root == null || visitor == null) {
-            throw new IllegalArgumentException("Root and visitor are required");
+            throw new IllegalArgumentException(
+                    "Root and visitor are required");
         }
 
         visitor.reset();
-        root.walk(this, visitor, "", 0);
+        root.traverse(this, visitor, "", 0);
     }
 
     public void visitNode(Node node, Visitor visitor,
@@ -19,8 +20,8 @@ public class FileSystemWalker {
         node.accept(visitor);
     }
 
-    public void walkChildren(DirectoryNode directory,
-                             Visitor visitor, String path, int depth) {
+    public void walkChildren(DirectoryNode directory, Visitor visitor,
+                             String path, int depth) {
 
         directory.getChildren().stream()
                 .sorted(Comparator.comparing(Node::getName))
@@ -29,7 +30,7 @@ public class FileSystemWalker {
                             ? child.getName()
                             : path + "/" + child.getName();
 
-                    child.walk(this, visitor, childPath, depth + 1);
+                    child.traverse(this, visitor, childPath, depth + 1);
                 });
     }
 }
