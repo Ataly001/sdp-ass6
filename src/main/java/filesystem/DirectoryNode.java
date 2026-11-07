@@ -13,13 +13,15 @@ public final class DirectoryNode extends Node {
             throw new IllegalArgumentException("Child cannot be null");
         }
         if (child.getParent() != null) {
-            throw new IllegalArgumentException("Child already has a parent");
+            throw new IllegalArgumentException(
+                    "Child already has a parent");
         }
-        for (DirectoryNode ancestor = this;
-             ancestor != null;
-             ancestor = ancestor.getParent()) {
 
-            if (ancestor == child) {
+        for (DirectoryNode current = this;
+             current != null;
+             current = current.getParent()) {
+
+            if (current == child) {
                 throw new IllegalArgumentException("Cycle detected");
             }
         }
