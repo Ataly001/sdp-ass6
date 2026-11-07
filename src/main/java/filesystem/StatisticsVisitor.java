@@ -1,0 +1,42 @@
+package filesystem;
+
+public final class StatisticsVisitor implements Visitor {
+    private int fileCount;
+    private int directoryCount;
+    private int maximumDepth;
+
+    @Override
+    public void setLocation(String path, int depth) {
+        maximumDepth = Math.max(maximumDepth, depth);
+    }
+
+    @Override
+    public void visit(FileNode file) {
+        fileCount++;
+    }
+
+    @Override
+    public void visit(DirectoryNode directory) {
+        directoryCount++;
+    }
+
+    @Override
+    public void reset() {
+        fileCount = 0;
+        directoryCount = 0;
+        maximumDepth = 0;
+    }
+
+    public int getFileCount() {
+        return fileCount;
+    }
+
+    public int getDirectoryCount() {
+        return directoryCount;
+    }
+
+    public int getMaximumDepth() {
+        return maximumDepth;
+    }
+}
+
