@@ -1,0 +1,102 @@
+
+@startuml
+title Visitor Pattern
+
+top to bottom direction
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 40
+skinparam ranksep 50
+
+interface Element {
+    +getName(): String
+    +accept(visitor: Visitor): void
+    +traverse(...): void
+}
+
+abstract class Node {
+    -name: String
+    -parent: DirectoryNode
+    +getName(): String
+    +getParent(): DirectoryNode
+}
+
+class FileNode {
+    -size: long
+    +getSize(): long
+    +accept(visitor: Visitor): void
+    +traverse(...): void
+}
+
+class DirectoryNode {
+    -children: List<Node>
+    +addChild(child: Node): void
+    +getChildren(): List<Node>
+    +accept(visitor: Visitor): void
+    +traverse(...): void
+}
+
+interface Visitor {
+    +visit(file: FileNode): void
+    +visit(directory: DirectoryNode): void
+    +reset(): void
+    +setLocation(path: String, depth: int): void
+}
+
+class TotalSizeVisitor {
+    -totalSize: long
+    +visit(file: FileNode): void
+    +visit(directory: DirectoryNode): void
+    +reset(): void
+    +getTotalSize(): long
+}
+
+class SearchVisitor {
+    -nameFilter: Predicate<String>
+    -minimumSize: long
+    -matches: List<String>
+    +visit(file: FileNode): void
+    +visit(directory: DirectoryNode): void
+    +reset(): void
+    +setLocation(...): void
+    +getMatches(): List<String>
+}
+
+class StatisticsVisitor {
+    -fileCount: int
+    -directoryCount: int
+    -maximumDepth: int
+    +visit(file: FileNode): void
+    +visit(directory: DirectoryNode): void
+    +reset(): void
+    +setLocation(...): void
+    +getFileCount(): int
+    +getDirectoryCount(): int
+    +getMaximumDepth(): int
+}
+
+class FileSystemWalker {
+    +walk(root: Node, visitor: Visitor): void
+    +visitNode(...): void
+    +walkChildren(...): void
+}
+
+Element <|.. Node
+Node <|-- FileNode
+Node <|-- DirectoryNode
+
+DirectoryNode "0..1" *-- "0..*" Node : children
+
+Visitor <|.. TotalSizeVisitor
+Visitor <|.. SearchVisitor
+Visitor <|.. StatisticsVisitor
+
+FileNode ..> Visitor : accept()
+DirectoryNode ..> Visitor : accept()
+
+FileSystemWalker ..> Element : traverses
+FileSystemWalker ..> Visitor : uses
+
+@enduml
